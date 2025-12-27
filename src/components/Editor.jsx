@@ -1,99 +1,106 @@
 "use client";
 
-import { useLiveblocksExtension, FloatingToolbar } from "@liveblocks/react-tiptap";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Heading from "@tiptap/extension-heading";
-import BulletList from "@tiptap/extension-bullet-list";
-import OrderedList from "@tiptap/extension-ordered-list";
-import ListItem from "@tiptap/extension-list-item";
-import Blockquote from "@tiptap/extension-blockquote";
-import CodeBlock from "@tiptap/extension-code-block";
-import Bold from "@tiptap/extension-bold";
-import Italic from "@tiptap/extension-italic";
-import Strike from "@tiptap/extension-strike";
-import Code from "@tiptap/extension-code";
-import { Threads } from "./Threads";
+import { useLiveblocksExtension, FloatingToolbar } from "@liveblocks/react-tiptap";
 import { ClientSideSuspense } from "@liveblocks/react/suspense";
+import { Threads } from "./Threads";
+import background from "../assets/background.png";
+import { useState, useEffect } from "react";
 
-// Notion-like Toolbar Component
+// Toolbar
 const NotionToolbar = ({ editor }) => {
+  const [, forceUpdate] = useState(0);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const updateHandler = () => forceUpdate(n => n + 1);
+
+    editor.on('selectionUpdate', updateHandler);
+    editor.on('transaction', updateHandler);
+
+    return () => {
+      editor.off('selectionUpdate', updateHandler);
+      editor.off('transaction', updateHandler);
+    };
+  }, [editor]);
+
   if (!editor) return null;
 
-  const toolbarItems = [
-    {
-      label: 'H1',
-      action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      isActive: editor.isActive('heading', { level: 1 }),
+  const buttons = [
+    { 
+      label: "H1", 
+      action: () => {
+        editor.chain().focus().toggleHeading({ level: 1 }).run();
+      },
+      isActive: () => editor.isActive('heading', { level: 1 })
     },
-    {
-      label: 'H2',
-      action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-      isActive: editor.isActive('heading', { level: 2 }),
+    { 
+      label: "H2", 
+      action: () => {
+        editor.chain().focus().toggleHeading({ level: 2 }).run();
+      },
+      isActive: () => editor.isActive('heading', { level: 2 })
     },
-    {
-      label: 'H3',
-      action: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-      isActive: editor.isActive('heading', { level: 3 }),
+    { 
+      label: "H3", 
+      action: () => {
+        editor.chain().focus().toggleHeading({ level: 3 }).run();
+      },
+      isActive: () => editor.isActive('heading', { level: 3 })
     },
-    {
-      label: 'Bold',
+    { 
+      label: "Bold", 
       action: () => editor.chain().focus().toggleBold().run(),
-      isActive: editor.isActive('bold'),
-      shortcut: 'Ctrl+B',
+      isActive: () => editor.isActive('bold')
     },
-    {
-      label: 'Italic',
+    { 
+      label: "Italic", 
       action: () => editor.chain().focus().toggleItalic().run(),
-      isActive: editor.isActive('italic'),
-      shortcut: 'Ctrl+I',
+      isActive: () => editor.isActive('italic')
     },
-    {
-      label: 'Strike',
+    { 
+      label: "Strike", 
       action: () => editor.chain().focus().toggleStrike().run(),
-      isActive: editor.isActive('strike'),
+      isActive: () => editor.isActive('strike')
     },
-    {
-      label: 'Code',
-      action: () => editor.chain().focus().toggleCode().run(),
-      isActive: editor.isActive('code'),
-    },
-    {
-      label: '• List',
+    { 
+      label: "• List", 
       action: () => editor.chain().focus().toggleBulletList().run(),
-      isActive: editor.isActive('bulletList'),
+      isActive: () => editor.isActive('bulletList')
     },
-    {
-      label: '1. List',
+    { 
+      label: "1. List", 
       action: () => editor.chain().focus().toggleOrderedList().run(),
-      isActive: editor.isActive('orderedList'),
+      isActive: () => editor.isActive('orderedList')
     },
-    {
-      label: 'Quote',
+    { 
+      label: "Quote", 
       action: () => editor.chain().focus().toggleBlockquote().run(),
-      isActive: editor.isActive('blockquote'),
+      isActive: () => editor.isActive('blockquote')
     },
-    {
-      label: 'Code Block',
+    { 
+      label: "Code", 
       action: () => editor.chain().focus().toggleCodeBlock().run(),
-      isActive: editor.isActive('codeBlock'),
+      isActive: () => editor.isActive('codeBlock')
     },
   ];
 
   return (
-    <div className="border-b border-gray-800 p-3 flex flex-wrap gap-1 bg-gray-900">
-      {toolbarItems.map((item, index) => (
+    <div className="w-full bg-yellow-300 border-b-4 border-black p-3 flex flex-wrap gap-2 shadow-[2px_2px_0px_black]">
+      {buttons.map((btn, i) => (
         <button
-          key={index}
-          onClick={item.action}
-          className={`px-3 py-2 text-xs font-medium rounded transition-colors ${
-            item.isActive
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+          key={i}
+          onClick={(e) => {
+            e.preventDefault();
+            btn.action();
+          }}
+          className={`px-3 py-1.5 text-xs font-Coiny border-2 border-black rounded-full shadow-[2px_2px_0px_black] hover:-translate-y-0.5 transition ${
+            btn.isActive() ? 'bg-black text-yellow-300' : 'bg-yellow-300 hover:bg-yellow-400'
           }`}
-          title={item.shortcut || item.label}
         >
-          {item.label}
+          {btn.label}
         </button>
       ))}
     </div>
@@ -104,96 +111,36 @@ export default function Editor() {
   const liveblocks = useLiveblocksExtension();
 
   const editor = useEditor({
-    immediatelyRender: false,
     extensions: [
       liveblocks,
       StarterKit.configure({
-        history: false,
-        // Disable built-in extensions we're replacing with individual ones
-        heading: false,
-        bulletList: false,
-        orderedList: false,
-        listItem: false,
-        blockquote: false,
-        codeBlock: false,
-        bold: false,
-        italic: false,
-        strike: false,
-        code: false,
-      }),
-      // Individual extensions for better control
-      Heading.configure({
-        levels: [1, 2, 3, 4, 5, 6],
-        HTMLAttributes: {
-          class: 'heading',
-        },
-      }),
-      Bold,
-      Italic,
-      Strike,
-      Code.configure({
-        HTMLAttributes: {
-          class: 'bg-slate-700 text-blue-300 px-1 py-0.5 rounded text-sm',
-        },
-      }),
-      BulletList.configure({
-        keepMarks: true,
-        keepAttributes: false,
-        HTMLAttributes: {
-          class: 'bullet-list',
-        },
-      }),
-      OrderedList.configure({
-        keepMarks: true,
-        keepAttributes: false,
-        HTMLAttributes: {
-          class: 'ordered-list',
-        },
-      }),
-      ListItem.configure({
-        HTMLAttributes: {
-          class: 'list-item',
-        },
-      }),
-      Blockquote.configure({
-        HTMLAttributes: {
-          class: 'border-l-4 border-blue-500 pl-4 italic text-slate-300',
-        },
-      }),
-      CodeBlock.configure({
-        HTMLAttributes: {
-          class: 'bg-slate-800 text-slate-100 p-4 rounded-lg border border-slate-600 font-mono text-sm overflow-x-auto',
-        },
+        history: false, // Liveblocks handles history/undo
       }),
     ],
+    immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: "h-full p-6 focus:outline-none prose prose-lg prose-invert max-w-none text-slate-100",
+        class:
+          "prose prose-lg max-w-none focus:outline-none text-black font-Coiny p-4 min-h-[300px]",
       },
     },
-    content: `
-      <h1>Welcome to NovaSpace</h1>
-      <p>Start typing to create your document. Use the toolbar above to format your text.</p>
-      <h2>Features:</h2>
-      <ul>
-        <li>Rich text formatting</li>
-        <li>Multiple heading levels</li>
-        <li>Lists and quotes</li>
-        <li>Code blocks and inline code</li>
-        <li>Real-time collaboration</li>
-      </ul>
-    `,
   });
-  
+
   return (
-    <div className="relative bg-black rounded-lg shadow-sm border border-gray-800 overflow-hidden h-full flex flex-col">
+    <div className="relative h-full flex flex-col bg-white overflow-hidden">
       <NotionToolbar editor={editor} />
-      <div className="relative flex-1 overflow-auto">
-        <EditorContent editor={editor} className="notion-editor h-full" />
+
+      <div className="relative p-4 flex-1 overflow-auto">
+        <EditorContent
+          editor={editor}
+          style={{ backgroundImage: `url(${background})` }}
+          className="h-full"
+        />
+
         {editor && (
           <>
             <FloatingToolbar editor={editor} />
-            <ClientSideSuspense fallback={<div className="text-gray-400 p-4">Loading comments...</div>}>
+            <ClientSideSuspense fallback={<div className="p-4">Loading comments...</div>}>
               <Threads editor={editor} />
             </ClientSideSuspense>
           </>

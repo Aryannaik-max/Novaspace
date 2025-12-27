@@ -41,7 +41,7 @@ export function Threads({ editor, inEditor = false }) {
         </div>
         
         {/* FloatingComposer for creating new comments */}
-        <FloatingComposer editor={editor} />
+        <FloatingComposer editor={editor} metadata={{ type: "comment" }} />
       </>
     );
   }

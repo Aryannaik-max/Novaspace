@@ -1,91 +1,163 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { MoreVertical, MessageSquare, Eye, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { CheckSquare, Plus, Calendar, User, Filter } from 'lucide-react';
+import background from '../assets/background.png';
 
-const TaskCard = ({ task }) => {
-  const getCardColor = (category) => {
-    const colors = {
-      Marketing: 'from-blue-400 to-blue-500',
-      UX: 'from-purple-400 to-purple-500',
-      Development: 'from-orange-400 to-orange-500',
-      Design: 'from-teal-400 to-teal-500',
-      Branding: 'from-green-400 to-green-500',
-      HR: 'from-pink-400 to-pink-500',
-    };
-    return colors[category] || 'from-gray-400 to-gray-500';
+const KanbanBoard = () => {
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      title: 'Design user interface',
+      description: 'Create wireframes and mockups for the new dashboard',
+      status: 'todo',
+      priority: 'high',
+      assignee: 'Sarah Chen',
+      dueDate: '2025-11-15',
+    },
+    {
+      id: 1,
+      title: 'Design user interface',
+      description: 'Create wireframes and mockups for the new dashboard',
+      status: 'todo',
+      priority: 'high',
+      assignee: 'Sarah Chen',
+      dueDate: '2025-11-15',
+    },
+    {
+      id: 2,
+      title: 'Implement authentication',
+      description: 'Set up user login and registration system',
+      status: 'in-progress',
+      priority: 'high',
+      assignee: 'Mike Ross',
+      dueDate: '2025-11-20',
+    },
+    {
+      id: 2,
+      title: 'Implement authentication',
+      description: 'Set up user login and registration system',
+      status: 'in-progress',
+      priority: 'high',
+      assignee: 'Mike Ross',
+      dueDate: '2025-11-20',
+    },
+    {
+      id: 3,
+      title: 'Write documentation',
+      description: 'Document API endpoints and usage examples',
+      status: 'done',
+      priority: 'medium',
+      assignee: 'Emma Wilson',
+      dueDate: '2025-11-10',
+    },
+  ]);
+
+  const columns = [
+    { id: 'todo', title: 'To Do', color: 'bg-red-300' },
+    { id: 'in-progress', title: 'In Progress', color: 'bg-blue-300' },
+    { id: 'done', title: 'Done', color: 'bg-green-300' },
+  ];
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'high':
+        return 'bg-red-600 text-white';
+      case 'medium':
+        return 'bg-yellow-500 text-black';
+      case 'low':
+        return 'bg-green-600 text-white';
+      default:
+        return 'bg-gray-600 text-white';
+    }
   };
 
   return (
-    <motion.div
-      className={`relative bg-linear-to-tr from-blue-600 to-blue-300 p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group`}
-      whileHover={{ y: -5, scale: 1.02 }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="px-6 py-4 border-b-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <CheckSquare className="h-5 w-5 text-black" />
+          <h2 className="font-semibold text-black font-Coiny">Task Board</h2>
+        </div>
+
         <div className="flex items-center gap-2">
-          <span className="text-white/80 text-xs font-medium">{task.category}</span>
-          {task.tag && (
-            <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full">
-              {task.tag}
-            </span>
-          )}
+          <button className="flex items-center gap-2 text-sm px-3 py-1.5 rounded-full border-2 border-black bg-white text-black font-Coiny shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] hover:-translate-y-0.5 transition">
+            <Filter className="h-4 w-4" />
+            Filter
+          </button>
+
+          <button className="flex items-center gap-2 text-sm px-3 py-1.5 rounded-full border-2 border-black bg-blue-500 text-white font-Coiny shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] hover:-translate-y-0.5 transition">
+            <Plus className="h-4 w-4" />
+            Add Task
+          </button>
         </div>
-        <motion.button
-          className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/20 transition-colors"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <MoreVertical className="h-4 w-4" />
-        </motion.button>
       </div>
 
-      {/* Title */}
-      <h3 className="text-white font-semibold text-base mb-3">{task.title}</h3>
+      {/* Kanban Board */}
+      <div className="flex-1 p-6 overflow-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+          {columns.map((column) => (
+            <div
+              key={column.id}
+              className="relative rounded-xl border-4 border-black shadow-[6px_6px_0px_black] p-4 flex flex-col"
+              style={{ backgroundImage: `url(${background})` }}
+            >
+              <div
+                className={`absolute inset-0 border-2 ${column.color} opacity-50`}
+              />
 
-      {/* Members and Stats */}
-      <div className="flex items-center justify-between">
-        {/* Avatar Group */}
-        <div className="flex items-center">
-          <div className="flex -space-x-2">
-            {task.members.slice(0, 3).map((member, idx) => (
-              <motion.div
-                key={idx}
-                className="w-7 h-7 rounded-full border-2 border-white bg-linear-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-xs font-semibold"
-                whileHover={{ scale: 1.2, zIndex: 10 }}
-              >
-                {member.avatar || member.name.charAt(0)}
-              </motion.div>
-            ))}
-            {task.members.length > 3 && (
-              <div className="w-7 h-7 rounded-full border-2 border-white bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xs font-semibold">
-                +{task.members.length - 3}
+              <div className="flex items-center justify-between mb-4 relative border-2 z-10">
+                <h3 className="font-semibold text-black font-Coiny text-lg">
+                  {column.title}
+                </h3>
+                <span className="bg-gray-900 text-white rounded-full px-3 py-1 text-sm font-Coiny border-2 border-black shadow-[2px_2px_0px_black]">
+                  {tasks.filter(task => task.status === column.id).length}
+                </span>
               </div>
-            )}
-          </div>
+
+              <div className="space-y-4 z-10 flex-1 overflow-auto">
+                {tasks
+                  .filter(task => task.status === column.id)
+                  .map(task => (
+                    <div
+                      key={task.id}
+                      className="bg-white rounded-xl p-4 border-2 border-black shadow-[4px_4px_0px_black] hover:shadow-[6px_6px_0px_black] hover:-translate-y-1 transition-all"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="text-black font-Coiny text-base">
+                          {task.title}
+                        </h4>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-Coiny ${getPriorityColor(
+                            task.priority
+                          )}`}
+                        >
+                          {task.priority}
+                        </span>
+                      </div>
+
+                      <p className="text-sm text-black mb-3">
+                        {task.description}
+                      </p>
+
+                      <div className="flex items-center justify-between text-xs text-black font-Coiny">
+                        <div className="flex items-center gap-1">
+                          <User className="h-3 w-3" />
+                          <span>{task.assignee}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>{task.dueDate}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Progress Bar */}
-      {task.progress !== undefined && (
-        <div className="mt-3">
-          <div className="flex items-center justify-between text-xs text-white/80 mb-1">
-            <span>Progress</span>
-            <span>Est. {task.estimate}</span>
-          </div>
-          <div className="w-full bg-white/20 rounded-full h-1.5 overflow-hidden">
-            <motion.div
-              className="bg-white h-full rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${task.progress}%` }}
-              transition={{ duration: 1, delay: 0.3 }}
-            />
-          </div>
-        </div>
-      )}
-    </motion.div>
+    </div>
   );
 };
 
-export default TaskCard;
+export default KanbanBoard;

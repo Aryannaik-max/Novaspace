@@ -3,10 +3,11 @@ import React from 'react'
 import Logo from '../assets/logo.png'
 import bgimg from '../assets/bgimg.jpeg'
 import bgimg2 from '../assets/bgimg2.jpeg'
+import background from '../assets/background.png'
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white bg-fixed" style={{ backgroundImage: `url(${background})` }}>
       {/* Navigation */}
       <nav className="w-full border-b-4 border-black shadow-[4px_4px_0px_black]">
         <div className="flex justify-between items-center px-6 md:px-12 py-4">
