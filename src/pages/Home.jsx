@@ -37,13 +37,13 @@ const Home = () => {
           {/* Auth Buttons */}
           <div className="flex space-x-3 md:space-x-4">
             <Link
-              to="/dashboard"
+              to="/login"
               className="px-3 md:px-6 py-2 md:py-2.5 text-sm md:text-base bg-white rounded-xl border-3 border-black shadow-[3px_3px_0px_black] hover:shadow-[5px_5px_0px_black] hover:-translate-y-0.5 transition font-Coiny"
             >
               Login
             </Link>
             <Link
-              to="/dashboard"
+              to="/signup"
               className="px-3 md:px-6 py-2 md:py-2.5 text-sm md:text-base bg-yellow-300 rounded-xl border-3 border-black shadow-[3px_3px_0px_black] hover:shadow-[5px_5px_0px_black] hover:-translate-y-0.5 transition font-Coiny"
             >
               Sign Up
@@ -89,7 +89,7 @@ const Home = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              to="/dashboard"
+              to="/signup"
               className="px-8 py-4 bg-yellow-300 border-4 border-black rounded-xl text-center
                          shadow-[4px_4px_0px_black]
                          hover:shadow-[6px_6px_0px_black]
@@ -171,7 +171,7 @@ const Home = () => {
           Join thousands of teams already using Novaspace to collaborate better and ship faster.
         </p>
         <Link
-          to="/dashboard"
+          to="/signup"
           className="inline-block px-10 py-4 bg-yellow-300 border-4 border-black rounded-xl
                      shadow-[4px_4px_0px_black]
                      hover:shadow-[6px_6px_0px_black]

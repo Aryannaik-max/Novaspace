@@ -50,7 +50,7 @@ const KanbanBoard = () => {
       dueDate: '2025-11-10',
     },
   ]);
-
+  const [addtask, setAddTask] = useState(false);
   const columns = [
     { id: 'todo', title: 'To Do', color: 'bg-red-300', darkColor: 'bg-white' },
     { id: 'in-progress', title: 'In Progress', color: 'bg-blue-300', darkColor: 'bg-whihte' },
@@ -81,13 +81,62 @@ const KanbanBoard = () => {
           </button>
           <button className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border-2 border-black bg-blue-500 text-white font-Coiny shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] hover:-translate-y-0.5 transition">
             <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="hidden sm:inline">Add Task</span>
+            <span 
+              className="hidden sm:inline"
+              onClick={() => {
+                setAddTask(true)
+              }}
+            >Add Task</span>
           </button>
         </div>
       </div>
 
       {/* Kanban Board */}
       <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
+        <div>
+          {
+            addtask && (
+              <div className="mb-4 p-4 border-2 border-black rounded-xl shadow-[4px_4px_0px_black] bg-white">
+                <h3 className="font-semibold text-black font-Coiny mb-3">Add New Task</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <input type="text" placeholder="Task Title" className="w-full p-2 border-2 border-black rounded-lg font-Coiny"/>
+                  <select className="w-full p-2 border-2 border-black rounded-lg font-Coiny">
+                    <option value="">Section</option>
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                  </select>
+                  <input type="date" placeholder="Due Date" className="w-full p-2 border-2 border-black rounded-lg font-Coiny"/>
+                  <select className="w-full p-2 border-2 border-black rounded-lg font-Coiny">
+                    <option value="">Priority</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+                <textarea placeholder="Task Description" className="w-full p-2 border-2 border-black rounded-lg font-Coiny mb-4"></textarea>
+                <div className="flex justify-end gap-4">
+                  <button
+                    className="px-4 py-2 bg-gray-300 border-2 border-black rounded shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] transition font-Coiny"
+                    onClick={() => setAddTask(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-blue-500 text-white border-2 border-black rounded shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] transition font-Coiny"  
+                    onClick={() => {
+                      // Logic to add task goes here
+                      setAddTask(false)
+                    }}
+                  >
+                    Add Task
+                  </button>
+                </div>
+              </div>
+            
+            )
+          }
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6  h-full ">
           {columns.map((column) => (
             <div key={column.id} className={`relative rounded-xl border-4 border-black shadow-[6px_6px_0px_black] p-3 sm:p-4 flex flex-col h-full`} style={{backgroundImage: `url(${background})`}}>

@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useLiveblocksExtension, FloatingToolbar } from "@liveblocks/react-tiptap";
 import { ClientSideSuspense } from "@liveblocks/react/suspense";
+import { useStatus } from "@liveblocks/react/suspense";
 import { Threads } from "./Threads";
 import background from "../assets/background.png";
 import { useState, useEffect } from "react";
@@ -107,17 +108,18 @@ const NotionToolbar = ({ editor }) => {
   );
 };
 
-export default function Editor() {
+function EditorContent_() {
   const liveblocks = useLiveblocksExtension();
+  const status = useStatus();
+  const [isReady, setIsReady] = useState(false);
 
   const editor = useEditor({
     extensions: [
-      liveblocks,
       StarterKit.configure({
-        history: false, // Liveblocks handles history/undo
+        undoRedo: false,
       }),
+      liveblocks,
     ],
-    immediatelyRender: false,
     editorProps: {
       attributes: {
         class:
@@ -125,6 +127,17 @@ export default function Editor() {
       },
     },
   });
+
+  useEffect(() => {
+    if (status === "connected" && editor) {
+      const timer = setTimeout(() => setIsReady(true), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [status, editor]);
+
+  if (!isReady) {
+    return <div className="p-4 font-Coiny">Loading editor...</div>;
+  }
 
   return (
     <div className="relative h-full flex flex-col bg-white overflow-hidden">
@@ -147,5 +160,13 @@ export default function Editor() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function Editor() {
+  return (
+    <ClientSideSuspense fallback={<div className="p-4 font-Coiny">Loading...</div>}>
+      <EditorContent_ />
+    </ClientSideSuspense>
   );
 }

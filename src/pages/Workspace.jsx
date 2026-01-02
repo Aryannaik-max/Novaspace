@@ -106,18 +106,18 @@ const Workspace = () => {
 										</div>
 										</div>
 										<div className="flex-1 overflow-hidden h-full">
-											<Editor docId={`workspace_${id}`} username="You" />
+											<Editor key={`editor-${id}`} docId={`workspace_${id}`} username="You" />
 										</div>
 
 										{/* Bottom status bar */}
-								<div className="absolute left-6 right-6 bottom-4 flex items-center justify-between">
+								{/* <div className="absolute left-6 right-6 bottom-4 flex items-center justify-between">
 									<div className="text-sm bg-yellow-300 px-3 py-1 rounded-full border-2 border-black shadow-[2px_2px_0px_black] font-Coiny">3 collaborators editing — Last saved: 2 minutes ago</div>
 											<div className="flex items-center -space-x-3">
 												<div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-semibold">S</div>
 												<div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs font-semibold">M</div>
 												<div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-semibold">E</div>
 											</div>
-										</div>
+										</div> */}
 									</div>
 								</div>
 
