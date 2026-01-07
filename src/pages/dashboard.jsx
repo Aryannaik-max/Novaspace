@@ -1,14 +1,68 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import WorkspaceCard from '../components/WorkspaceCard';
 import background from '../assets/background.png';
+import { useAuth } from '../context/AuthContext';
+// import { set } from '../../../../BACKEND/src';
+// import { set } from '../../../../BACKEND/src';
 
 const Dashboard = () => {
-  const workspaces = [
-    { id: 1, name: "College Project", role: "Admin", description: "Workspace for college assignments and group projects." },
-    { id: 2, name: "Design Team", role: "Editor", description: "Collaborative space for the design team to share assets and feedback." },
-    { id: 3, name: "Startup Ideas", role: "Viewer", description: "Brainstorm and develop startup concepts with team members." },
-  ];
+  const [workspaces, setWorkspaces] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [workspaceName, setWorkspaceName] = useState('');
+  const [workspaceDescription, setWorkspaceDescription] = useState('');
   const [addWorkspace, setAddWorkspace] = useState(false);
+  const { token } = useAuth();
+  const fetchWorkspaces = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/v1/workspaces', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setWorkspaces(data.data);
+      } else {
+        setError('Failed to load workspaces');
+      }
+    } catch (error) {
+      setError('An error occurred while fetching workspaces');
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+      if (token) {
+        fetchWorkspaces();
+      }
+  },[token]);
+
+  const handleCreateWorkspace = async () => {
+    try {
+        const response = await fetch('http://localhost:3000/api/v1/workspaces', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: workspaceName,
+          description: workspaceDescription ,
+          role: 'Admin'
+        })
+      });
+      const data = await response.json();   
+      if (data.success) {                     
+        setAddWorkspace(false);               
+        setWorkspaceName('');                 
+        setWorkspaceDescription('');          
+        fetchWorkspaces();
+      }
+    } catch (error) {
+      setError('Failed to create workspace');
+    }
+  }
   return (
     <div className="min-h-screen bg-white " style={{backgroundImage:`url(${background})`}}>
 
@@ -44,12 +98,16 @@ const Dashboard = () => {
                 <h2 className="text-xl font-Coiny mb-4">Create New Workspace</h2>
                 <input 
                   type="text"
+                  value={workspaceName}
                   placeholder="Workspace Name"
                   className="w-full border-2 border-black rounded px-3 py-2 mb-4 focus:outline-none"
+                  onChange={(e) => setWorkspaceName(e.target.value)}
                 />
                 <textarea 
                   placeholder="Description"
+                  value={workspaceDescription}
                   className="w-full border-2 border-black rounded px-3 py-2 mb-4 focus:outline-none"
+                  onChange={(e) => setWorkspaceDescription(e.target.value)}  
                 ></textarea>
                 <div className="flex justify-end space-x-4">
                   <button
@@ -60,9 +118,8 @@ const Dashboard = () => {
                   </button>
                   <button
                     className="px-4 py-2 bg-blue-500 text-white border-2 border-black rounded shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] transition font-Coiny"
-                    onClick={() => {
-                      // Logic to create workspace goes here
-                      setAddWorkspace(false)
+                    onClick={() => { 
+                      handleCreateWorkspace();
                     }}
                   >
                     Create
@@ -79,15 +136,15 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
 
-          {workspaces.map((ws) => (
+          {Array.isArray(workspaces) && workspaces.map((workspace) => (
             <div
-              key={ws.id}
+              key={workspace.id}
               className="border-4 border-black rounded-2xl
                          p-6 shadow-[4px_4px_0px_black]
                          hover:-translate-y-1 transition
                          bg-white"
             >
-              <WorkspaceCard name={ws.name} role={ws.role} description={ws.description} id={ws.id} />
+              <WorkspaceCard name={workspace.name} role={workspace.role} description={workspace.description} id={workspace.id} onDelete={fetchWorkspaces} />
             </div>
           ))}
 

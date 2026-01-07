@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Upload, FileText, Image, File, Download, Trash2 } from 'lucide-react';
+import { Upload, FileText, Image, File} from 'lucide-react';
 import background from '../assets/background.png';
 
 
-const DEMO_FILES = [
-  { id: 1, name: 'Project_Brief.pdf', size: '2.4 MB', type: 'pdf', uploadedBy: 'Alice', date: 'Today' },
-  { id: 2, name: 'Design_Mockup.png', size: '5.1 MB', type: 'image', uploadedBy: 'Bob', date: 'Yesterday' },
-  { id: 3, name: 'Requirements.docx', size: '1.2 MB', type: 'doc', uploadedBy: 'You', date: '2 days ago' },
-];
+
 
 const WorkspaceFiles = () => {
   const [files, setFiles] = useState(DEMO_FILES);
