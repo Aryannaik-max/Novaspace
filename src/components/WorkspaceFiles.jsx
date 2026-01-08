@@ -1,12 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Upload, FileText, Image, File} from 'lucide-react';
 import background from '../assets/background.png';
-
+import { useAuth } from '../context/AuthContext';
+import { useParams } from 'react-router-dom'; 
 
 
 
 const WorkspaceFiles = () => {
-  const [files, setFiles] = useState(DEMO_FILES);
+  const [files, setFiles] = useState([]);
+  const fileInputRef = useRef(null);
+  const { token } = useAuth();
+  const {id: workspaceId} = useParams();
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/v1/files/${workspaceId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        if (data.success) {
+          setFiles(data.data);
+        }
+      } catch (error) {
+        console.log('An error occurred while fetching files');
+      }
+    }
+    fetchFiles();
+  }, [token, workspaceId]);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('workspaceId', workspaceId);
+
+    try {
+      const response = await fetch('http://localhost:3000/api/v1/files', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      const data = await response.json();
+      if (data.success) {
+        setFiles((prevFiles) => [...prevFiles, data.data]);
+      }
+    } catch (error) {
+      console.log('An error occurred while uploading files');
+    }
+  };
 
   const getFileIcon = (type) => {
     switch (type) {
@@ -46,11 +93,14 @@ const WorkspaceFiles = () => {
 
       {/* Upload Area */}
       <div className="p-6 border-t border-slate-200 bg-slate-50">
-        <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-purple-400 hover:bg-purple-50/30 transition-all cursor-pointer">
+        <div 
+          className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-purple-400 hover:bg-purple-50/30 transition-all cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+        >
           <Upload className="h-12 w-12 text-slate-400 mx-auto mb-3" />
           <p className="text-slate-600 font-medium mb-1">Drop files here or click to upload</p>
           <p className="text-sm text-slate-500">Support for PDF, images, and documents</p>
-          <input type="file" className="hidden" multiple />
+          <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} />
         </div>
       </div>
     </div>
