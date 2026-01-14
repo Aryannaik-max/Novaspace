@@ -1,12 +1,36 @@
 import React, { useEffect, useState } from 'react'
 import WorkspaceCard from '../components/WorkspaceCard';
 import background from '../assets/background.png';
+import search from '../assets/search.svg';
 import { useAuth } from '../context/AuthContext';
 // import { set } from '../../../../BACKEND/src';
 // import { set } from '../../../../BACKEND/src';
 
 const Dashboard = () => {
   const [workspaces, setWorkspaces] = useState([]);
+  const [inviteSearch, setInviteSearch] = useState('');
+  const [searchResult, setSearchResult] = useState(null);
+  const [searchError, setSearchError] = useState('');
+    const handleSearchWorkspace = async () => {
+      setSearchError('');
+      setSearchResult(null);
+      if (!inviteSearch.trim()) return;
+      try {
+        const response = await fetch(`http://localhost:3000/api/v1/workspaces/invite/${inviteSearch.trim()}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        if (data.success && data.data) {
+          setSearchResult(data.data);
+        } else {
+          setSearchError('Workspace not found or invalid invite code');
+        }
+      } catch (error) {
+        setSearchError('Error searching workspace');
+      }
+    };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [workspaceName, setWorkspaceName] = useState('');
@@ -74,7 +98,21 @@ const Dashboard = () => {
         <h1 className="font-Coiny text-xl">
           Novaspace
         </h1>
-
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <input
+            type="text"
+            value={inviteSearch}
+            onChange={e => setInviteSearch(e.target.value)}
+            placeholder="Enter invite code to find workspace"
+            className="border-2 border-black rounded px-3 py-2 font-Coiny w-full sm:w-100 "
+          />
+          <button
+            className="px-4 py-2 bg-yellow-300 border-2 border-black rounded-xl shadow-[2px_2px_0px_black] font-Coiny"
+            onClick={handleSearchWorkspace}
+          >
+            <img src={search} alt="Search" className="w-5 h-5 text-2xl " />
+          </button>
+        </div>
         <button
           className="px-4 py-2 bg-yellow-300 
                      border-3 border-black rounded-xl
@@ -129,6 +167,50 @@ const Dashboard = () => {
             </div>
           )
         }
+
+
+        {/* Search Workspace by Invite Code */}
+        
+
+        {searchError && (
+          <div className="mb-4 text-red-600 font-Coiny">{searchError}</div>
+        )}
+        {searchResult && (
+          <div className="mb-4 p-4 border-2 border-black rounded-xl bg-yellow-100 font-Coiny">
+            <h3 className="text-lg mb-2">Workspace Found:</h3>
+            <div>Name: <span className="font-bold">{searchResult.name}</span></div>
+            <div>Description: {searchResult.description}</div>
+            <div>Owner: {searchResult.ownerId}</div>
+            <button
+              className="mt-3 px-4 py-2 bg-blue-500 text-white border-2 border-black rounded shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] font-Coiny"
+              onClick={async () => {
+                try {
+                  const response = await fetch(`http://localhost:3000/api/v1/workspaces/join`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ inviteCode: searchResult.inviteCode })
+                  });
+                  const data = await response.json();
+                  if (data.success) {
+                    setSearchResult(null);
+                    setInviteSearch('');
+                    fetchWorkspaces();
+                    alert('Successfully joined workspace!');
+                  } else {
+                    alert(data.message || 'Failed to join workspace');
+                  }
+                } catch (err) {
+                  alert('Error joining workspace');
+                }
+              }}
+            >
+              Join Workspace
+            </button>
+          </div>
+        )}
 
         <h2 className="text-2xl font-Coiny mb-6 ">
           Your Workspaces

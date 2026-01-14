@@ -7,10 +7,14 @@ import TasksView from '../components/TasksView';
 import background from '../assets/background.png';
 // import CommentsPanel from '../components/CommentsPanel';
 import { Comment } from '../components/Comment';
+import { useAuth } from '../context/AuthContext';
 
 const Workspace = () => {
 	const { id } = useParams();
 	const [activeTab, setActiveTab] = useState('editor');
+	const [share, setShare] = useState(false);
+	const [inviteCode, setInviteCode] = useState('');
+	const { token } = useAuth();
 	
 	// Sanitize ID to match Liveblocks room ID requirements
 
@@ -20,6 +24,22 @@ const Workspace = () => {
 		{ id: 'tasks', label: 'Tasks'},
 		{ id: 'chat', label: 'Chat' },
 	];
+
+const shareInvite = async () => {
+	console.log("Fetching invite code for workspace:", id);
+	const res = await fetch(`http://localhost:3000/api/v1/workspaces/${id}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`,
+		},
+	});
+	const data = await res.json();
+	const inviteLink = data.data.inviteCode;
+	console.log("Received invite code:", inviteLink);
+	setInviteCode(inviteLink);
+	setShare(true);
+};
 
 	return (
 		<div className="min-h-screen">
@@ -84,11 +104,21 @@ const Workspace = () => {
 							<p className="text-sm text-gray-700 font-Coiny">Collaborative workspace for your team</p>
 						</div>
 						<div className="flex items-center gap-3">
-							<button className="px-3 py-1 rounded-full border-2 border-black bg-yellow-300 text-black text-sm shadow-[2px_2px_0px_black] font-Coiny">Share</button>
-							<button className="px-3 py-1 rounded-full border-2 border-black bg-yellow-300 text-black text-sm shadow-[2px_2px_0px_black] font-Coiny">Save</button>
+							<button className="px-3 py-1 rounded-full border-2 border-black bg-yellow-300 text-black text-sm shadow-[2px_2px_0px_black] font-Coiny" onClick={shareInvite}>Share</button>
 						</div>
 						</div>
 					</header>
+					{share && inviteCode && (
+												<div className="mb-4 p-4 bg-yellow-100 border-2 border-black rounded font-Coiny text-black flex items-center justify-between">
+													<div >
+														<span>Invite Code: </span>
+														<span className="font-bold">{inviteCode}</span>
+													</div>
+													<div className="cursor-pointer" onClick={() => setShare(false)}>
+														<span className='text-sm px-3 py-3 rounded-2xl border-2 border-black bg-yellow-300 text-black shadow-[2px_2px_0px_black]'>Close</span>
+													</div>
+												</div>
+											)}
 
 					<main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-6 overflow-hidden">
 						{activeTab === 'editor' ? (
@@ -100,15 +130,25 @@ const Workspace = () => {
 												<span className="text-xl">✎</span>
 												<h2 className=" text-black font-Coiny">Product Requirements Doc</h2>
 											</div>
-										<div className="flex items-center gap-2 font-Coiny">
-											<button className="text-sm px-3 py-1 rounded-full border-2 border-black bg-yellow-300 text-black shadow-[2px_2px_0px_black]">Share</button>
-											<button className="text-sm px-3 py-1 rounded-full border-2 border-black bg-yellow-300 text-black shadow-[2px_2px_0px_black]">Save</button>
-										</div>
+										{/* <div className="flex items-center gap-2 font-Coiny">
+											<button className="text-sm px-3 py-1 rounded-full border-2 border-black bg-yellow-300 text-black shadow-[2px_2px_0px_black]" onClick={shareInvite}>Share</button>
+										</div> */}
 										</div>
 										<div className="flex-1 overflow-hidden h-full">
+											{/* {share && inviteCode && (
+												<div className="mb-4 p-4 bg-yellow-100 border-2 border-black rounded font-Coiny text-black flex items-center justify-between">
+													<div >
+														<span>Invite Code: </span>
+														<span className="font-bold">{inviteCode}</span>
+													</div>
+													<div className="cursor-pointer" onClick={() => setShare(false)}>
+														<span className='text-sm px-3 py-3 rounded-2xl border-2 border-black bg-yellow-300 text-black shadow-[2px_2px_0px_black]'>Close</span>
+													</div>
+												</div>
+											)} */}
 											<Editor key={`editor-${id}`} docId={`workspace_${id}`} username="You" />
 										</div>
-
+							
 										{/* Bottom status bar */}
 								{/* <div className="absolute left-6 right-6 bottom-4 flex items-center justify-between">
 									<div className="text-sm bg-yellow-300 px-3 py-1 rounded-full border-2 border-black shadow-[2px_2px_0px_black] font-Coiny">3 collaborators editing — Last saved: 2 minutes ago</div>
@@ -139,6 +179,7 @@ const Workspace = () => {
 										{activeTab === 'tasks' && 'Tasks'}
 										{activeTab === 'chat' && 'Chat'}
 									</h2>
+									
 								</div>
 								<div className="flex-1 overflow-auto">
 									{activeTab === 'files' && <WorkspaceFiles />}
