@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import background from '../assets/background.png';
+import { Link } from 'react-router-dom';
 
 const Signup = () => {
   const [name, setName] = useState('');
