@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Editor from '../components/editor';
+import Editor from '../components/Editor';
 import { Chat } from '../components/Chats';
 import WorkspaceFiles from '../components/WorkspaceFiles';
 import TasksView from '../components/TasksView';
