@@ -17,7 +17,7 @@ export function Chat() {
     const fetchUsers = async () => {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL;
-        const response = await fetch(`${backendUrl}/workspaces/${workspaceId}/members`, {
+        const response = await fetch(`${backendUrl}/api/v1/workspaces/${workspaceId}/members`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

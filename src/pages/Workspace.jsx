@@ -28,7 +28,7 @@ const Workspace = () => {
 
 const shareInvite = async () => {
 	console.log("Fetching invite code for workspace:", id);
-	const res = await fetch(`${backendUrl}/workspaces/${id}`, {
+	const res = await fetch(`${backendUrl}/api/v1/workspaces/${id}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',

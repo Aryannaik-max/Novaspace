@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) return;
     
     try {
-      const response = await fetch(`${API_URL}/profile`, {
+      const response = await fetch(`${API_URL}/api/v1/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   }, [token, fetchUserProfile]);
 
   const login = async (email, password) => {
-    const response = await fetch(`${API_URL}/signin`, {
+    const response = await fetch(`${API_URL}/api/v1/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password) => {
-    const response = await fetch(`${API_URL}/signup`, {
+    const response = await fetch(`${API_URL}/api/v1/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

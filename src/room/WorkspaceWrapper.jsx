@@ -9,7 +9,7 @@ export default function WorkspaceWrapper() {
     // Use the dynamic route param so Liveblocks room matches the opened workspace
     <RoomProvider
       id={`workspace-${id}`}
-      authEndpoint={`${backendUrl}/auth/liveblocks`}
+      authEndpoint={`${backendUrl}/api/v1/auth/liveblocks`}
     >
       <Workspace />
     </RoomProvider>

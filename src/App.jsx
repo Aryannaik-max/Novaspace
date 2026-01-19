@@ -26,7 +26,7 @@ function LiveblocksConfig({ children }) {
           throw new Error('No authentication token available');
         }
 
-        const response = await fetch(`${backendUrl}/auth/liveblocks`, {
+        const response = await fetch(`${backendUrl}/api/v1/auth/liveblocks`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -47,7 +47,7 @@ function LiveblocksConfig({ children }) {
       }}
       resolveUsers={async ({ userIds }) => {
   try {
-    const response = await fetch(`${backendUrl}/users/batch` , {
+    const response = await fetch(`${backendUrl}/api/v1/users/batch` , {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

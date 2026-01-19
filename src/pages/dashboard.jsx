@@ -17,7 +17,7 @@ const Dashboard = () => {
       setSearchResult(null);
       if (!inviteSearch.trim()) return;
       try {
-        const response = await fetch(`${backendUrl}/workspaces/invite/${inviteSearch.trim()}`, {
+        const response = await fetch(`${backendUrl}/api/v1/workspaces/invite/${inviteSearch.trim()}`, {
           headers: {
             'Authorization': `bearer ${token}`
           }
@@ -40,7 +40,7 @@ const Dashboard = () => {
   const { token } = useAuth();
   const fetchWorkspaces = async () => {
     try {
-      const response = await fetch(`${backendUrl}/workspaces`, {
+      const response = await fetch(`${backendUrl}/api/v1/workspaces`, {
         headers: {
           'Authorization': `bearer ${token}`
         }
@@ -65,7 +65,7 @@ const Dashboard = () => {
 
   const handleCreateWorkspace = async () => {
     try {
-        const response = await fetch(`${backendUrl}/workspaces`, {
+        const response = await fetch(`${backendUrl}/api/v1/workspaces`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

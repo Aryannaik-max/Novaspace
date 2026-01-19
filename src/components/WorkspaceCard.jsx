@@ -4,14 +4,15 @@ import { useAuth } from '../context/AuthContext';
 
 const WorkspaceCard = ({name, role, description, id, onDelete}) => {
   const { user } = useAuth();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const removeUserFromWorkspace = async () => {
   let url;
   if (role === "Admin") {
     // Delete the entire workspace
-    url = `http://localhost:3000/api/v1/workspaces/${id}`;
+    url = `${backendUrl}/api/v1/workspaces/${id}`;
   } else {
     // Leave workspace (remove self as member)
-    url = `http://localhost:3000/api/v1/workspaces/${id}/members/${user.id}`;
+    url = `${backendUrl}/api/v1/workspaces/${id}/members/${user.id}`;
   }
   
   const result = await fetch(url, {

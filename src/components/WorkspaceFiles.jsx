@@ -10,10 +10,11 @@ const WorkspaceFiles = () => {
   const [files, setFiles] = useState([]);
   const fileInputRef = useRef(null);
   const { token } = useAuth();
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const {id: workspaceId} = useParams();
   const handleDeleteFile = async (fileId) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/files/${fileId}`, {
+      const response = await fetch(`${backendUrl}/api/v1/files/${fileId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -32,7 +33,7 @@ const WorkspaceFiles = () => {
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/files/${workspaceId}`, {
+        const response = await fetch(`${backendUrl}/api/v1/files/${workspaceId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -58,7 +59,7 @@ const WorkspaceFiles = () => {
     formData.append('workspaceId', workspaceId);
 
     try {
-      const response = await fetch('http://localhost:3000/api/v1/files', {
+      const response = await fetch(`${backendUrl}/api/v1/files`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

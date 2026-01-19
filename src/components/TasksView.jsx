@@ -19,9 +19,10 @@ const KanbanBoard = () => {
     { id: 'in-progress', title: 'In Progress', color: 'bg-blue-300', darkColor: 'bg-whihte' },
     { id: 'done', title: 'Done', color: 'bg-green-300', darkColor: 'bg-white' },
   ];
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const handleDeleteTask = async (taskId) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/tasks/${taskId}`, {
+      const response = await fetch(`${backendUrl}/api/v1/tasks/${taskId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -49,7 +50,7 @@ const KanbanBoard = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/tasks?workspaceId=${workspaceId}`, {
+        const response = await fetch(`${backendUrl}/api/v1/tasks?workspaceId=${workspaceId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -77,7 +78,7 @@ const KanbanBoard = () => {
       workspaceId: workspaceId, 
       createdBy: user.id 
     };
-    const response = await fetch('http://localhost:3000/api/v1/tasks', {
+    const response = await fetch(`${backendUrl}/api/v1/tasks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
