@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import background from '../assets/background.png';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -65,7 +66,7 @@ const Login = () => {
         </form>
         <div>
           <p className='mt-4 text-center'>
-            Don't have an account? <a href="/signup" className='text-blue-600 underline'>Sign up</a>
+            Don't have an account? <Link to="/signup" className='text-blue-600 underline'>Sign up</Link>
           </p>
         </div>
       </div>
