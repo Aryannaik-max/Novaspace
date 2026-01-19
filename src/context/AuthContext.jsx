@@ -79,6 +79,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password) => {
+    console.log(API_URL);
     const response = await fetch(`${API_URL}/api/v1/signup`, {
       method: 'POST',
       headers: {
