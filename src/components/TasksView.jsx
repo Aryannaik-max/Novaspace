@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckSquare, Square, Plus, Calendar, User, Filter } from 'lucide-react';
+import { CheckSquare, Square, Plus, Calendar, User, Filter, Trash2 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import background from '../assets/background.png';
 import { useAuth } from '../context/AuthContext';
@@ -19,6 +19,24 @@ const KanbanBoard = () => {
     { id: 'in-progress', title: 'In Progress', color: 'bg-blue-300', darkColor: 'bg-whihte' },
     { id: 'done', title: 'Done', color: 'bg-green-300', darkColor: 'bg-white' },
   ];
+  const handleDeleteTask = async (taskId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setTasks(tasks.filter(task => task.id !== taskId));
+      } else {
+        console.log('Failed to delete task');
+      }
+    } catch (error) {
+      console.log('An error occurred while deleting task', error);
+    }
+  };
   const {user} = useAuth();
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -56,17 +74,18 @@ const KanbanBoard = () => {
       dueDate: taskDueDate,
       priority: taskPriority,
       section: taskSection,
-      workspaceId: workspaceId, // Assuming you have workspaceId from props or context
-      createdBy: user.id // Assuming you have user info from context
+      workspaceId: workspaceId, 
+      createdBy: user.id 
     };
     const response = await fetch('http://localhost:3000/api/v1/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `bearer ${token}`
       },
       body: JSON.stringify(newTask)});
       const data = await response.json();
+      console.log('Add Task Response:', data);
       if (data.success) {
         setTasks([...tasks, data.data]);
       } else {
@@ -168,18 +187,23 @@ const KanbanBoard = () => {
                         <span className={`px-2 py-1 rounded-full text-xs font-Coiny whitespace-nowrap ${getPriorityColor(task.priority)}`}>
                           {task.priority}
                         </span>
+                        <button
+                          className="ml-2 p-1 rounded hover:bg-red-100"
+                          title="Delete Task"
+                          onClick={() => handleDeleteTask(task.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-600" />
+                        </button>
                       </div>
-                      
                       <p className="text-xs sm:text-sm text-black mb-2 sm:mb-3">{task.description}</p>
-                      
                       <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-2 text-xs text-black font-Coiny">
                         <div className="flex items-center gap-1">
                           <User className="h-3 w-3" />
-                          <span className="font-Coiny truncate">{task.createdBy}</span>
+                          <span className="font-Coiny truncate">{task.creator.name}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          <span className="font-Coiny">{task.dueDate}</span>
+                          <span className="font-Coiny"> {new Date(task.createdAt).toLocaleDateString('en-IN')}</span>
                         </div>
                       </div>
                     </div>

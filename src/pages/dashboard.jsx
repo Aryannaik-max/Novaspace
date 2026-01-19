@@ -11,14 +11,15 @@ const Dashboard = () => {
   const [inviteSearch, setInviteSearch] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [searchError, setSearchError] = useState('');
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const handleSearchWorkspace = async () => {
       setSearchError('');
       setSearchResult(null);
       if (!inviteSearch.trim()) return;
       try {
-        const response = await fetch(`http://localhost:3000/api/v1/workspaces/invite/${inviteSearch.trim()}`, {
+        const response = await fetch(`${backendUrl}/workspaces/invite/${inviteSearch.trim()}`, {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `bearer ${token}`
           }
         });
         const data = await response.json();
@@ -39,9 +40,9 @@ const Dashboard = () => {
   const { token } = useAuth();
   const fetchWorkspaces = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/v1/workspaces', {
+      const response = await fetch(`${backendUrl}/workspaces`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `bearer ${token}`
         }
       });
       const data = await response.json();
@@ -64,11 +65,11 @@ const Dashboard = () => {
 
   const handleCreateWorkspace = async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/v1/workspaces', {
+        const response = await fetch(`${backendUrl}/workspaces`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `bearer ${token}`
         },
         body: JSON.stringify({
           name: workspaceName,

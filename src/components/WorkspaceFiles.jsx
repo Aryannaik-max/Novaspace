@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, FileText, Image, File} from 'lucide-react';
+import { Upload, FileText, Image, File, Trash2 } from 'lucide-react';
 import background from '../assets/background.png';
 import { useAuth } from '../context/AuthContext';
 import { useParams } from 'react-router-dom'; 
@@ -11,6 +11,24 @@ const WorkspaceFiles = () => {
   const fileInputRef = useRef(null);
   const { token } = useAuth();
   const {id: workspaceId} = useParams();
+  const handleDeleteFile = async (fileId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/files/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setFiles(files.filter(file => file.id !== fileId));
+      } else {
+        console.log('Failed to delete file');
+      }
+    } catch (error) {
+      console.log('An error occurred while deleting file');
+    }
+  };
   useEffect(() => {
     const fetchFiles = async () => {
       try {
@@ -20,6 +38,7 @@ const WorkspaceFiles = () => {
           }
         });
         const data = await response.json();
+        console.log(data);
         if (data.success) {
           setFiles(data.data);
         }
@@ -80,10 +99,17 @@ const WorkspaceFiles = () => {
               <div key={file.id} className='bg-white rounded-xl font-Coiny p-2 border-4 shadow-[4px_4px_0px]'>
                 <div className='flex items-center'>
                   <div className=''>{getFileIcon(file.type)}</div>
-                  <div className='flex flex-col ml-4'>
+                  <div className='flex flex-col ml-4 flex-1'>
                     {file.name}
-                    <div className='text-sm text-gray-600'>{file.size} • Uploaded by {file.uploadedBy}</div>
+                    <div className='text-sm text-gray-600'>{file.size} • Uploaded by {file.uploader.name}</div>
                   </div>
+                  <button
+                    className="ml-2 p-1 rounded hover:bg-red-100"
+                    title="Delete File"
+                    onClick={() => handleDeleteFile(file.id)}
+                  >
+                    <Trash2 className="h-5 w-5 text-red-600" />
+                  </button>
                 </div>
               </div>
             )

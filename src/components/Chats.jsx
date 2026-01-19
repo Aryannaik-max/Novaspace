@@ -1,38 +1,57 @@
 "use client";
 
-import { useThreads } from "@liveblocks/react/suspense";
+import { useThreads, useUser } from "@liveblocks/react/suspense";
 import { Composer, Thread } from "@liveblocks/react-ui";
 import background from "../assets/background.png";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+
 
 export function Chat() {
   const { threads } = useThreads({query: { resolved: false, metadata: {type: "chat"} }});
-  const people = [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-    { id: 3, name: "Charlie" },
-  ];
-
+  const [users, setUsers] = useState([]);
+  const { id: workspaceId } = useParams();
+  const { token } = useAuth();
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/workspaces/${workspaceId}/members`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        console.log("Fetched workspace members:", data.data);
+        if (data.success) {
+          setUsers(data.data);
+        }
+      } catch (error) {
+        console.log('An error occurred while fetching users');
+      }
+    }
+    fetchUsers();
+  }, [token]);
+  // const {user} = useUser();
+  // console.log("Current user in Chat component:", user);
   return (
           <div className="flex h-full">
-            {/* people in the room */}
             <div className="flex flex-col bg-yellow-300 border-2 shadow-[4px_4px_0px] w-48 border-r border-gray-300 overflow-y-auto">
               <div>
-                {
-                  people.map((person) => {
-                    return (
-                      <div>
-                        <div key={person.id} className="px-4 py-3  border-b border-gray-800 flex items-center justify-between shrink-0">
-                          <div>
-                            <h4 className="text-sm font-semibold text-black font-Coiny">{person.name}</h4>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })
-                }
+                <h3 className="font-Coiny text-lg font-bold p-3 border-b-2 border-black">Members</h3>
+                {users.map((member) => (
+                  <div key={member.user.id} className="flex items-center p-2 border-b border-gray-300">
+                    <img
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(member.user.name)}&background=random`}
+                      alt={member.user.name}
+                      className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white font-Coiny mr-2"
+                    />
+                    <span className="font-Coiny">{member.user.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
-            {/* chat threads */}
             <div className="flex-1 h-full flex flex-col">
               <div className="flex flex-1 flex-col ">
                 {
@@ -53,7 +72,5 @@ export function Chat() {
               </div>
             </div>
           </div>
-
-        
   );
 }

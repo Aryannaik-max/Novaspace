@@ -109,9 +109,13 @@ const NotionToolbar = ({ editor }) => {
 };
 
 function EditorContent_() {
+
   const liveblocks = useLiveblocksExtension();
   const status = useStatus();
   const [isReady, setIsReady] = useState(false);
+
+  
+  const docId = typeof window !== 'undefined' && window.location ? window.location.pathname : undefined;
 
   const editor = useEditor({
     extensions: [
@@ -129,6 +133,12 @@ function EditorContent_() {
   });
 
   useEffect(() => {
+    if (editor) {
+      editor.chain().clearContent().run();
+    }
+  }, [docId]);
+
+  useEffect(() => {
     if (status === "connected" && editor) {
       const timer = setTimeout(() => setIsReady(true), 100);
       return () => clearTimeout(timer);
@@ -138,7 +148,7 @@ function EditorContent_() {
   if (!isReady) {
     return <div className="p-4 font-Coiny">Loading editor...</div>;
   }
-
+  
   return (
     <div className="relative h-full flex flex-col bg-white overflow-hidden">
       <NotionToolbar editor={editor} />

@@ -15,6 +15,7 @@ const Workspace = () => {
 	const [share, setShare] = useState(false);
 	const [inviteCode, setInviteCode] = useState('');
 	const { token } = useAuth();
+	const backendUrl = import.meta.env.VITE_BACKEND_URL;
 	
 	// Sanitize ID to match Liveblocks room ID requirements
 
@@ -27,11 +28,11 @@ const Workspace = () => {
 
 const shareInvite = async () => {
 	console.log("Fetching invite code for workspace:", id);
-	const res = await fetch(`http://localhost:3000/api/v1/workspaces/${id}`, {
+	const res = await fetch(`${backendUrl}/workspaces/${id}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${token}`,
+			'Authorization': `bearer ${token}`,
 		},
 	});
 	const data = await res.json();
@@ -65,10 +66,6 @@ const shareInvite = async () => {
 				<aside className="w-72 min-h-screen p-4 hidden md:block bg-white border-r-4 border-black" style={{backgroundImage: `url(${background})`}}>
 					<div className="mb-6">
 						<h2 className="text-lg font-bold font-Coiny">Workspace</h2>
-						<p className="text-sm text-gray-600 mt-1 font-Coiny">Your teams & projects</p>
-					</div>
-					<div className="mb-4">
-						<input placeholder="Search..." className="w-full border-2 border-black text-sm placeholder-black text-black rounded px-3 py-2 focus:outline-none" />
 					</div>
 					{/* <div className="space-y-2 mt-4">
 						<button className="w-full text-left px-3 py-2 rounded text-black flex items-center justify-between border-2 border-black bg-yellow-300 hover:shadow-[5px_5px_0px] hover:-translate-y-0.5 shadow-[2px_2px_0px_black] font-Coiny">
