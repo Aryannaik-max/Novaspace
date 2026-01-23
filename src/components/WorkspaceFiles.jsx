@@ -39,7 +39,6 @@ const WorkspaceFiles = () => {
           }
         });
         const data = await response.json();
-        console.log(data);
         if (data.success) {
           setFiles(data.data);
         }
@@ -92,33 +91,38 @@ const WorkspaceFiles = () => {
         <p className="text-sm text-black">Shared files from your workspace</p>
       </div>
 
-      {/* Files List */}
       <div className="flex-1 overflow-y-auto p-6 text-black bg-red-500" style={{backgroundImage: `url(${background})`}}>
         <div className="grid  grid-cols-1 lg:grid-cols-3 gap-10">
           {files.map((file) => {
-            return (
-              <div key={file.id} className='bg-white rounded-xl font-Coiny p-2 border-4 shadow-[4px_4px_0px]'>
-                <div className='flex items-center'>
-                  <div className=''>{getFileIcon(file.type)}</div>
-                  <div className='flex flex-col ml-4 flex-1'>
-                    {file.name}
-                    <div className='text-sm text-gray-600'>{file.size} • Uploaded by {file.uploader.name}</div>
-                  </div>
-                  <button
-                    className="ml-2 p-1 rounded hover:bg-red-100"
-                    title="Delete File"
-                    onClick={() => handleDeleteFile(file.id)}
-                  >
-                    <Trash2 className="h-5 w-5 text-red-600" />
-                  </button>
-                </div>
-              </div>
-            )
-          })}
+  
+  const uploaderName = file.uploader?.name || file.uploadedBy?.name || "Me"; 
+
+  return (
+    <div key={file.id} className='bg-white rounded-xl font-Coiny p-2 border-4 shadow-[4px_4px_0px]'>
+      <div className='flex items-center'>
+        <div className=''>{getFileIcon(file.type)}</div>
+        <div className='flex flex-col ml-4 flex-1'>
+          <a href={file.url} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-blue-600">
+             {file.name}
+          </a>
+          <div className='text-sm text-gray-600'>
+             {file.size} • Uploaded by {uploaderName}
+          </div>
+        </div>
+        <button
+          className="ml-2 p-1 rounded hover:bg-red-100"
+          title="Delete File"
+          onClick={() => handleDeleteFile(file.id)}
+        >
+          <Trash2 className="h-5 w-5 text-red-600" />
+        </button>
+      </div>
+    </div>
+  )
+})}
         </div>
       </div>
 
-      {/* Upload Area */}
       <div className="p-6 border-t border-slate-200 bg-slate-50">
         <div 
           className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-purple-400 hover:bg-purple-50/30 transition-all cursor-pointer"
