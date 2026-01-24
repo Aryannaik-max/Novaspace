@@ -32,6 +32,7 @@ const NotionToolbar = ({ editor }) => {
   const buttons = [
     { 
       label: "H1", 
+      shortLabel: "H1",
       action: () => {
         editor.chain().focus().toggleHeading({ level: 1 }).run();
       },
@@ -39,6 +40,7 @@ const NotionToolbar = ({ editor }) => {
     },
     { 
       label: "H2", 
+      shortLabel: "H2",
       action: () => {
         editor.chain().focus().toggleHeading({ level: 2 }).run();
       },
@@ -46,43 +48,51 @@ const NotionToolbar = ({ editor }) => {
     },
     { 
       label: "H3", 
+      shortLabel: "H3",
       action: () => {
         editor.chain().focus().toggleHeading({ level: 3 }).run();
       },
       isActive: () => editor.isActive('heading', { level: 3 })
     },
     { 
-      label: "Bold", 
+      label: "Bold",
+      shortLabel: "B", 
       action: () => editor.chain().focus().toggleBold().run(),
       isActive: () => editor.isActive('bold')
     },
     { 
       label: "Italic", 
+      shortLabel: "I",
       action: () => editor.chain().focus().toggleItalic().run(),
       isActive: () => editor.isActive('italic')
     },
     { 
-      label: "Strike", 
+      label: "Strike",
+      shortLabel: "S", 
       action: () => editor.chain().focus().toggleStrike().run(),
       isActive: () => editor.isActive('strike')
     },
     { 
       label: "• List", 
+      shortLabel: "•",
       action: () => editor.chain().focus().toggleBulletList().run(),
       isActive: () => editor.isActive('bulletList')
     },
     { 
       label: "1. List", 
+      shortLabel: "1.",
       action: () => editor.chain().focus().toggleOrderedList().run(),
       isActive: () => editor.isActive('orderedList')
     },
     { 
       label: "Quote", 
+      shortLabel: "\"",
       action: () => editor.chain().focus().toggleBlockquote().run(),
       isActive: () => editor.isActive('blockquote')
     },
     { 
       label: "Code", 
+      shortLabel: "</>",
       action: () => editor.chain().focus().toggleCodeBlock().run(),
       isActive: () => editor.isActive('codeBlock')
     },
@@ -101,7 +111,8 @@ const NotionToolbar = ({ editor }) => {
             btn.isActive() ? 'bg-black text-yellow-300' : 'bg-yellow-300 hover:bg-yellow-400'
           }`}
         >
-          {btn.label}
+          <span className="hidden sm:inline">{btn.label}</span>
+          <span className="sm:hidden">{btn.shortLabel}</span>
         </button>
       ))}
     </div>
@@ -132,11 +143,7 @@ function EditorContent_() {
     },
   });
 
-  useEffect(() => {
-    if (editor) {
-      editor.chain().clearContent().run();
-    }
-  }, [docId]);
+
 
   useEffect(() => {
     if (status === "connected" && editor) {
@@ -153,10 +160,9 @@ function EditorContent_() {
     <div className="relative h-full flex flex-col bg-white overflow-hidden">
       <NotionToolbar editor={editor} />
 
-      <div className="relative p-4 flex-1 overflow-auto">
+      <div className="relative p-4 flex-1 overflow-auto" style={{ backgroundImage: `url(${background})` }}>
         <EditorContent
           editor={editor}
-          style={{ backgroundImage: `url(${background})` }}
           className="h-full"
         />
 

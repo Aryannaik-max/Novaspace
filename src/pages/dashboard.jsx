@@ -53,7 +53,6 @@ const Dashboard = () => {
   const handleToggleSearch = () => {
     setSearching(!searching);
     if (searching) {
-      // Clear search when closing
       setInviteSearch('');
       setSearchResult(null);
       setSearchError('');
@@ -135,20 +134,17 @@ const Dashboard = () => {
       className="min-h-screen bg-white" 
       style={{ backgroundImage: `url(${background})` }}
     >
-      {/* TOP BAR */}
       <header className="h-16 border-b-4 border-black 
                          flex items-center justify-between 
                          px-4 sm:px-6 shadow-[4px_4px_0px_black]">
         
-        {/* Logo - Hidden on mobile when searching */}
         <h1 className={`font-Coiny text-xl sm:text-2xl transition-all duration-300
                         ${searching ? 'hidden sm:block' : 'block'}`}>
           Novaspace
         </h1>
 
-        {/* Search Section */}
         <div className="flex items-center gap-2 sm:gap-4 flex-1 sm:flex-initial justify-center sm:justify-start">
-          {/* Search Input - Shows when searching is true */}
+
             <input
               type="text"
               value={inviteSearch}
@@ -161,7 +157,6 @@ const Dashboard = () => {
               autoFocus
             />
 
-          {/* Search/Execute Button */}
           {!searching ? (
             <button
               className="px-4 py-2 bg-yellow-300 border-2 border-black rounded-xl 
@@ -174,7 +169,7 @@ const Dashboard = () => {
             </button>
           ) : (
             <button
-              className="px-4 py-2 bg-yellow-300 border-2 border-black rounded-xl 
+              className="px-4 py-3 bg-yellow-300 border-2 border-black rounded-xl 
                          shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] 
                          transition font-Coiny active:translate-y-[2px] active:shadow-none"
               onClick={handleSearchWorkspace}
@@ -184,22 +179,21 @@ const Dashboard = () => {
             </button>
           )}
 
-          {/* Close Search Button */}
+
           {searching && (
             <button
-              className={`px-3 py-2 bg-yellow-300  border-2 border-black rounded-xl 
+              className={`px-4 py-2 bg-yellow-300  border-2 border-black rounded-xl 
                          shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] 
-                         transition font-Coiny text-lg font-bold 
+                         transition  text-lg font-light 
                          active:translate-y-[2px] active:shadow-none ${searching ? 'block' : 'hidden'} sm:hidden`}
               onClick={handleToggleSearch}
               aria-label="Close search"
             >
-              ✕
+              X
             </button>
           )}
         </div>
 
-        {/* Create Workspace Button - Hidden on small screens when searching */}
         <button
           className={`px-3 sm:px-4 py-2 bg-yellow-300 
                      border-2 border-black rounded-xl
@@ -215,11 +209,9 @@ const Dashboard = () => {
         </button>
       </header>
 
-      {/* WORKSPACE COLLECTION */}
       <main className="p-4 sm:p-8 w-full mx-auto">
-        {/* CREATE WORKSPACE MODAL */}
         {addWorkspace && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white p-6 rounded-xl border-4 border-black shadow-[6px_6px_0px_black] w-full max-w-md">
               <h2 className="text-xl font-Coiny mb-4">Create New Workspace</h2>
               
@@ -273,7 +265,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* SEARCH ERROR */}
         {searchError && (
           <div className="mb-4 p-3 bg-red-100 flex justify-between items-center border-2 border-red-500 rounded text-red-700 font-Coiny">
             <div>
@@ -293,7 +284,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* SEARCH RESULT */}
         {searchResult && (
           <div className="mb-6 p-4 border-4 border-black rounded-xl bg-yellow-100 font-Coiny shadow-[4px_4px_0px_black]">
             <h3 className="text-lg mb-3 font-bold">Workspace Found:</h3>
@@ -339,7 +329,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* YOUR WORKSPACES */}
         <h2 className="text-2xl font-Coiny mb-6">Your Workspaces</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">

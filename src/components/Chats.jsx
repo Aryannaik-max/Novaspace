@@ -39,7 +39,7 @@ export function Chat() {
   // console.log("Current user in Chat component:", user);
   return (
 
-          <div className="flex flex-col overflow-hidden relative h-full">
+          <div className="flex relative h-full">
             {!showMembers?(<button 
               className="lg:hidden fixed bottom-20 right-4 z-20 p-3 bg-yellow-300 border-2 border-black rounded-full shadow-[2px_2px_0px_black] hover:shadow-[3px_3px_0px_black] transition font-Coiny active:translate-y-[2px] active:shadow-none"
               onClick={() => setShowMembers(true)}
@@ -49,8 +49,8 @@ export function Chat() {
                 {users.length}
               </span>
             </button>):null}
-            {showMembers && <div className="flex flex-col  bg-yellow-300 border-2 shadow-[4px_4px_0px] border-r border-gray-300 overflow-y-auto fixed lg:static inset-y-0 left-0 z-30 
-        w-64 sm:w-72 lg:w-48 xl:w-64">
+            {<div className={`flex flex-col  bg-yellow-300 border-2 shadow-[4px_4px_0px] border-r border-gray-300 overflow-y-auto  fixed lg:static inset-y-0 left-0 z-30 
+        w-64 sm:w-72 lg:w-48 xl:w-64 ${showMembers ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} md:block`}>
               <div>
                 <div className="flex justify-between items-center">
                   <h3 className="font-Coiny text-lg font-bold p-3 border-b-2 border-black">Members</h3>
@@ -90,10 +90,10 @@ export function Chat() {
                   </div>
                 ))}
               </div>
-            </div>
               <div className="px-4 py-3 border-l-4  bg-yellow-300 border-t-2  border-slate-700 ">
                 <Composer className="w-full border-2  rounded-xl shadow-[4px_4px_0px] font-Coiny" metadata={{type: "chat"}} />
               </div>
+            </div>
           </div>
   );
 }
