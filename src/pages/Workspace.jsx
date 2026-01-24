@@ -178,7 +178,7 @@ const shareInvite = async () => {
 									</h2>
 									
 								</div>
-								<div className="flex-1 overflow-auto">
+								<div className="flex-1 overflow-hidden h-full">
 									{activeTab === 'files' && <WorkspaceFiles />}
 									{activeTab === 'tasks' && <TasksView />}
 									{activeTab === 'chat' && <Chat />}
